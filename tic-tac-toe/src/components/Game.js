@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 import GameField from './GameField';
+import Modal from './Modal';
 import { calculateWinner } from '../utils';
 import { Button } from '@material-ui/core';
 import useSound from 'use-sound';
 import clickSound from './436667__herraportti__snap3.wav';
 import newGameSound from './newgame.wav';
 import winSound from './winSound.wav';
-import Modal from './Modal'
 
 
 export default function Game() {
@@ -16,7 +16,6 @@ export default function Game() {
     const [countStep, setCountStep] = useState(0);
     const winner = calculateWinner(gameField);
     const [statusGame, setStatusGame] = useState(1);
-
     const [play] = useSound(clickSound);
     const [playGame] = useSound(newGameSound);
     const [playWin, { stop }] = useSound(winSound);
@@ -25,7 +24,24 @@ export default function Game() {
     //     playWin();
     // }, [winner]);
 
+    // useEffect(() => {
+    //     const data = localStorage.getItem('game tic-tac-toe');
+    //     if (data) {
+    //         return JSON.parse(data);
 
+    //     }
+    // }, [])
+
+
+    useEffect(() => {
+        const gameState = {
+            field: gameField,
+            count: countStep
+        }
+        localStorage.setItem('game tic-tac-toe', JSON.stringify(gameState));
+        // localStorage.setItem('game-step tic-tac-toe', JSON.stringify(countStep));
+        // // localStorage.setItem('game tic-tac-toe', JSON.stringify(stepNext));
+    })
 
     const handleClick = (index) => {
         const field = [...gameField];
