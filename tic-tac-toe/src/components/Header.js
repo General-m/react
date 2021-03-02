@@ -1,14 +1,13 @@
-import React from 'react';
 import { Button } from '@material-ui/core';
 
-export default function Header() {
+export default function Header(props) {
+
     return (
         <div className='header'>
-            {/* 
-
-            <Button variant="contained" color="primary">
+            <Button variant="contained" color="primary" onClick={props.startNewGame} >
                 New Game
-</Button> */}
+</Button>
+
             <Button variant="contained" color="primary">
                 AutoPlay
 </Button>

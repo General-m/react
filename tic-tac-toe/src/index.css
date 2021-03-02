@@ -22,7 +22,7 @@ code {
 .container {
   margin: auto;
   width: 600px;
-  height: 600px;
+  height: 650px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -78,6 +78,20 @@ code {
   
   justify-content: center;
   align-items: center;
-  align-content: center;
+  align-content: center;  
+}
+
+.game__status {
+  font-size: 20px;
+  color: #eceff1;
+  transition: 0.3s all ease;
+}
+
+.description {
+  font-size: 20px;
   
+}
+
+.about {
+  color: #eceff1;
 }

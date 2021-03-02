@@ -1,21 +1,18 @@
 import React from 'react';
-import { Link } from '@material-ui/core';
-import About from './About';
-import Game from './Game';
-import { BrowserRouter, Switch, Route } from 'react-router-dom'
+import Link from '@material-ui/core/Link';
+import { BrowserRouter, Route, Switch } from "react-router-dom";
+
 
 
 export default function Footer() {
     return (
         <div className='footer'>
-            <Link to='/' >
-                Home
+            <Link href="/ ">
+                Game
                 </Link>
-            <Link to='/About' >
+            <Link href='/About' >
                 About
                 </Link>
-
-
             <Link href="https://rs.school/js/" >
                 RS-School
             </Link>
