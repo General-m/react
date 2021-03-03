@@ -8,6 +8,8 @@ import useSound from 'use-sound';
 import clickSound from './436667__herraportti__snap3.wav';
 import newGameSound from './newgame.wav';
 import winSound from './winSound.wav';
+import cross from '../x.png';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
 
 
 export default function Game() {
@@ -16,31 +18,70 @@ export default function Game() {
     const [countStep, setCountStep] = useState(0);
     const winner = calculateWinner(gameField);
     const [statusGame, setStatusGame] = useState(1);
-    const [play] = useSound(clickSound);
+    const [play, { stop }] = useSound(clickSound);
     const [playGame] = useSound(newGameSound);
-    const [playWin, { stop }] = useSound(winSound);
+    const [playWin] = useSound(winSound);
+    const gameState = {
+        field: gameField,
+        count: countStep,
+        step: stepNext
+    }
+
+    const [isHovering, setIsHovering] = React.useState(
+        true
+    );
 
     // useEffect(() => {
     //     playWin();
     // }, [winner]);
 
-    // useEffect(() => {
-    //     const data = localStorage.getItem('game tic-tac-toe');
-    //     if (data) {
-    //         return JSON.parse(data);
+    useEffect(() => {
 
-    //     }
-    // }, [])
+        if (localStorage.gameGeneral) {
+            setGameField((JSON.parse(localStorage.gameGeneral)).field);
+            setCountStep((JSON.parse(localStorage.gameGeneral)).count);
+            setStepNext((JSON.parse(localStorage.gameGeneral)).step);
+        }
+    }, [])
 
 
     useEffect(() => {
-        const gameState = {
-            field: gameField,
-            count: countStep
+        const onKeypress = e => {
+            console.log(e);
+            switch (e.code) {
+                case 'KeyN':
+                    setGameField(Array(9).fill(null));
+                    setCountStep(0);
+                    playGame();
+                    break;
+                case 'KeyW':
+                    if (isHovering) {
+                        setIsHovering(false);
+                        stop();
+                    }
+                    else {
+                        setIsHovering(true);
+                        play();
+                    }
+
+                    break;
+
+                default:
+                    break;
+            }
+
         }
-        localStorage.setItem('game tic-tac-toe', JSON.stringify(gameState));
-        // localStorage.setItem('game-step tic-tac-toe', JSON.stringify(countStep));
-        // // localStorage.setItem('game tic-tac-toe', JSON.stringify(stepNext));
+
+        document.addEventListener('keypress', onKeypress);
+
+        return () => {
+            document.removeEventListener('keypress', onKeypress);
+        };
+    }, [isHovering]);
+
+
+    useEffect(() => {
+        localStorage.setItem('gameGeneral', JSON.stringify(gameState));
     })
 
     const handleClick = (index) => {
@@ -48,12 +89,14 @@ export default function Game() {
         if (winner || field[index]) {
             return
         }
-
-        field[index] = stepNext ? 'X' : 'O';
+        field[index] = stepNext ? '╳' : '◯';
         setStepNext(!stepNext);
         setCountStep(countStep + 1);
         setGameField(field);
-        play();
+        if (isHovering) {
+            play();
+        }
+
 
     }
 
@@ -69,6 +112,7 @@ export default function Game() {
             </Button>
         )
     }
+
 
     const settings = () => {
         return (
@@ -131,8 +175,7 @@ export default function Game() {
             {cancelGame()}
 
             <GameField cells={gameField} onClick={handleClick} onChange={startAutoPlay} />
+
         </div >
-
-
     )
 }

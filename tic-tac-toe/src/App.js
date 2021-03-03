@@ -1,10 +1,8 @@
-import logo from './logo.svg';
 import './App.css';
 import Footer from './components/Footer';
-import Header from './components/Header';
 import About from './components/About';
 import Game from './components/Game';
-import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 function App() {
   return (
