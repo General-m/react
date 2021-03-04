@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Route, Switch, Link } from "react-router-dom";
 import GameField from './GameField';
 import Modal from './Modal';
 import { calculateWinner } from '../utils';
@@ -8,8 +7,10 @@ import useSound from 'use-sound';
 import clickSound from './436667__herraportti__snap3.wav';
 import newGameSound from './newgame.wav';
 import winSound from './winSound.wav';
-import cross from '../x.png';
-import ReactCSSTransitionGroup from 'react-addons-css-transition-group'
+import styled, { keyframes } from 'styled-components';
+import { bounce } from 'react-animations';
+import iconsView from './constant'
+
 
 
 export default function Game() {
@@ -21,15 +22,18 @@ export default function Game() {
     const [play, { stop }] = useSound(clickSound);
     const [playGame] = useSound(newGameSound);
     const [playWin] = useSound(winSound);
+    const [isHovering, setIsHovering] = useState(true);
+
+    const [icons, setIconsView] = useState(0);
+
     const gameState = {
         field: gameField,
         count: countStep,
-        step: stepNext
+        step: stepNext,
+        isSound: isHovering,
+        // icons: icons
     }
-
-    const [isHovering, setIsHovering] = React.useState(
-        true
-    );
+    const Bounce = styled.div`animation: 2s ${keyframes`${bounce}`} infinite`;
 
     // useEffect(() => {
     //     playWin();
@@ -41,8 +45,12 @@ export default function Game() {
             setGameField((JSON.parse(localStorage.gameGeneral)).field);
             setCountStep((JSON.parse(localStorage.gameGeneral)).count);
             setStepNext((JSON.parse(localStorage.gameGeneral)).step);
+            setIsHovering((JSON.parse(localStorage.gameGeneral)).isSound);
         }
-    }, [])
+        if (localStorage.gameGeneralSettings) {
+            setIconsView((JSON.parse(localStorage.gameGeneralSettings)).icons)
+        }
+    }, [icons])
 
 
     useEffect(() => {
@@ -63,6 +71,11 @@ export default function Game() {
                         setIsHovering(true);
                         play();
                     }
+
+                    break;
+                case 'KeyA':
+                    setStepNext(!stepNext)
+
 
                     break;
 
@@ -89,7 +102,8 @@ export default function Game() {
         if (winner || field[index]) {
             return
         }
-        field[index] = stepNext ? '╳' : '◯';
+        console.log(icons);
+        field[index] = stepNext ? iconsView[icons][0] : iconsView[icons][1];
         setStepNext(!stepNext);
         setCountStep(countStep + 1);
         setGameField(field);
@@ -112,14 +126,6 @@ export default function Game() {
             </Button>
         )
     }
-
-
-    const settings = () => {
-        return (
-            <Modal />
-        )
-    }
-
 
     const startAutoPlay = (index) => {
         setGameField(Array(9).fill(null));
@@ -164,13 +170,14 @@ export default function Game() {
 
     return (
 
+
         <div className='container' >
             <div className='header'>
                 {startNewGame()}
                 <Button className='autoPlay' variant="contained" color="primary" onClick={startAutoPlay} >
                     AutoPlay
                     </Button>
-                {settings()}
+                <Modal />
             </div>
             {cancelGame()}
 

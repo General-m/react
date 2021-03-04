@@ -3,12 +3,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import Modal from '@material-ui/core/Modal';
 import { Button } from '@material-ui/core';
 import useSound from 'use-sound';
-import Checkbox from '@material-ui/core/Checkbox';
 import clickSound from './436667__herraportti__snap3.wav';
-
-// function rand() {
-//     return Math.round(Math.random() * 20) - 10;
-// }
+import Checkboxs from './CheckBoxs'
 
 function getModalStyle() {
     // const top = 50 + rand();
@@ -35,6 +31,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function SimpleModal() {
+
     const classes = useStyles();
     // getModalStyle is not a pure function, we roll the style only on the first render
     const [modalStyle] = React.useState(getModalStyle);
@@ -77,7 +74,6 @@ export default function SimpleModal() {
 
     useEffect(() => {
         const onKeypress = e => {
-            console.log(e);
             switch (e.code) {
                 case 'KeyS':
                     handleOpen();
@@ -110,9 +106,12 @@ export default function SimpleModal() {
             <p id="simple-modal-description">
                 Sound <br />
                 Music<br />
-                View
+
+
                 {/* {Demo()} */}
+
             </p>
+            <Checkboxs />
 
         </div>
     );
