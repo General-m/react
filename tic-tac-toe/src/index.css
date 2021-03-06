@@ -29,6 +29,7 @@ code {
   align-items: center;
   
   background-color: var(--paletteprimarydark);
+  
 }
 
 .footer , .header {
@@ -154,6 +155,11 @@ kbd {
   padding: 0;
 }
 
+#simple-modal-description {
+  font-size: 20px;
+  line-height: 1.5;
+}
+
  
 
 
@@ -173,6 +179,7 @@ kbd {
   }
 
 }
+
 
 
 

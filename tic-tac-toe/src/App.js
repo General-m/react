@@ -10,10 +10,10 @@ function App() {
       <div className="App">
         <div className='container'>
           <Switch>
-            <Route path='/About'>
+            <Route path='/react/tic-tac-toe/build/About'>
               <About />
             </Route>
-            <Route path='/'>
+            <Route path='/react/tic-tac-toe/build/'>
               <Game />
             </Route>
 

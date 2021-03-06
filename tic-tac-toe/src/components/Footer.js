@@ -1,13 +1,12 @@
 import React from 'react';
 import Link from '@material-ui/core/Link';
-import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 
 
 export default function Footer() {
     return (
         <div className='footer'>
-            <Link href="/ ">
+            <Link href="/">
                 Game
                 </Link>
             <Link href='/About' >

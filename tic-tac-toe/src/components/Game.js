@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import GameField from './GameField';
+import Modal from './Modal'
 import { calculateWinner } from '../utils';
 import { Button } from '@material-ui/core';
 import { ButtonGroup } from '@material-ui/core';
 import useSound from 'use-sound';
 import clickSound from './436667__herraportti__snap3.wav';
 import newGameSound from './newgame.wav';
-import winSound from './winSound.wav';
-import styled, { keyframes } from 'styled-components';
-import { bounce } from 'react-animations';
 import iconsView from './constant';
 import Checkbox from './CheckBox';
 import { IconButton } from '@material-ui/core';
 import MusicIcon from '@material-ui/icons/MusicOffRounded';
 import VolumeMute from '@material-ui/icons/MicNone';
+import Music from '../music.mp3'
 
 
 export default function Game() {
@@ -21,14 +20,15 @@ export default function Game() {
     const [gameField, setGameField] = useState(Array(9).fill(null));
     const [countStep, setCountStep] = useState(0);
     const winner = calculateWinner(gameField);
-    const [statusGame, setStatusGame] = useState(1);
     const [play, { stop }] = useSound(clickSound);
     const [playGame] = useSound(newGameSound);
-    const [playWin] = useSound(winSound);
     const [isHovering, setIsHovering] = useState(true);
     const [colorHeader, setcolorHeader] = useState('#64b5f6');
     const [icons, setIconsView] = useState(0);
     const [colorMain, setColorMain] = useState('#115293');
+    const [winX, setWinX] = useState(0);
+    const [winO, setWinO] = useState(0);
+    const [draw, setDraw] = useState(0);
 
 
     const gameState = {
@@ -40,14 +40,56 @@ export default function Game() {
         colorHeader: colorHeader
         // icons: icons
     }
-    const Bounce = styled.div`animation: 2s ${keyframes`${bounce}`} infinite`;
+    const gameStatic = {
+        X: winX,
+        O: winO,
+        draw: draw
+    }
 
-    // useEffect(() => {
-    //     playWin();
-    // }, [winner]);
+
+    const useAudio = url => {
+        const [audio] = useState(new Audio(url));
+        const [playing, setPlaying] = useState(false);
+
+        const toggle = () => setPlaying(!playing);
+
+        useEffect(() => {
+            playing ? audio.play() : audio.pause();
+        },
+            [playing]
+        );
+
+        useEffect(() => {
+            audio.addEventListener('ended', () => setPlaying(false));
+            return () => {
+                audio.removeEventListener('ended', () => setPlaying(false));
+            };
+        }, []);
+
+        return [playing, toggle];
+    };
+
+    const [playing, toggle] = useAudio(Music);
+
 
     useEffect(() => {
+        if (winner) {
+            (stepNext) ? setWinO(winO + 1) : setWinX(winX + 1);
+        }
+        // else if (countStep == 9) {
+        //     setDraw(draw + 1)
+        // }
+    }, [countStep])
 
+    useEffect(() => {
+        if (!winner && countStep == 9) {
+            setDraw(draw + 1)
+        }
+    }, [gameField])
+
+
+
+    useEffect(() => {
         if (localStorage.gameGeneral) {
             setGameField((JSON.parse(localStorage.gameGeneral)).field);
             setCountStep((JSON.parse(localStorage.gameGeneral)).count);
@@ -57,6 +99,14 @@ export default function Game() {
             setcolorHeader((JSON.parse(localStorage.gameGeneral)).colorHeader);
         }
     }, [icons])
+
+    useEffect(() => {
+        if (localStorage.gameGeneralStatic) {
+            setWinX((JSON.parse(localStorage.gameGeneralStatic)).X)
+            setWinO((JSON.parse(localStorage.gameGeneralStatic)).O)
+            setDraw((JSON.parse(localStorage.gameGeneralStatic)).draw)
+        }
+    }, [])
 
 
     useEffect(() => {
@@ -79,11 +129,21 @@ export default function Game() {
                     }
 
                     break;
+
                 case 'KeyA':
-                    setStepNext(!stepNext)
-
-
+                    setStepNext(!stepNext);
                     break;
+
+                case 'KeyQ':
+                    console.log(playing);
+                    console.log(toggle);
+                    if (playing) {
+                        toggle();
+                    }
+                    toggle();
+                    break;
+
+
 
                 default:
                     break;
@@ -96,14 +156,19 @@ export default function Game() {
         return () => {
             document.removeEventListener('keypress', onKeypress);
         };
-    }, [isHovering]);
+    }, [isHovering, playing]);
 
 
     useEffect(() => {
         localStorage.setItem('gameGeneral', JSON.stringify(gameState));
+
+    })
+    useEffect(() => {
+        localStorage.setItem('gameGeneralStatic', JSON.stringify(gameStatic));
     })
 
     const handleClick = (index) => {
+        // console.log(playing);
 
         const field = [...gameField];
         if (winner || field[index]) {
@@ -156,6 +221,8 @@ export default function Game() {
     const cancelGame = () => {
         let result = '';
         if (winner) {
+            console.log(winner, stepNext)
+
             result = 'Congratulations! Wins ' + winner;
 
 
@@ -179,7 +246,6 @@ export default function Game() {
     const updateData = (value) => {
         setIconsView(value);
 
-
     }
 
 
@@ -200,24 +266,26 @@ export default function Game() {
             <div className='header' style={{ backgroundColor: colorHeader }}>
                 {startNewGame()}
 
-                <ButtonGroup disableElevation variant="contained" >
-                    <button className='color__btn' onClick={() => { setcolorHeader('#64b5f6') }} size='small'>Change</button>
-                    <button className='color__btn' onClick={() => { setcolorHeader('#e57373') }} size='small'>Color</button>
+                <ButtonGroup disableElevation variant="contained" color="primary" >
+                    <Button className='color__btn' onClick={() => { setcolorHeader('#64b5f6') }} size='small'>Change</Button>
+                    <Button className='color__btn' onClick={() => { setcolorHeader('#e57373') }} size='small'>Color</Button>
                 </ButtonGroup>
-                <IconButton color="primary" aria-label="delete" >
+                <IconButton color="primary" aria-label="delete" onClick={toggle} title='on/off sound' >
                     <MusicIcon />
                 </IconButton>
                 <IconButton color="primary" aria-label="delete" onClick={toggleSound} title='on/off sound' >
                     <VolumeMute />
                 </IconButton>
+                <Modal />
 
             </div>
-            <ButtonGroup disableElevation variant="contained" >
+            <ButtonGroup disableElevation variant="contained" color="primary">
                 <Button className='color__btn' onClick={() => { setColorMain('#115293') }} size='small'>Change</Button>
                 <Button className='color__btn' onClick={() => { setColorMain('#e57373') }} size='small'>Color</Button>
             </ButtonGroup>
             <Checkbox updateData={updateData} />
             {cancelGame()}
+
 
             <GameField cells={gameField} onClick={handleClick} />
 

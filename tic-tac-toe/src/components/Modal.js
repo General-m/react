@@ -4,7 +4,7 @@ import Modal from '@material-ui/core/Modal';
 import { Button } from '@material-ui/core';
 import useSound from 'use-sound';
 import clickSound from './436667__herraportti__snap3.wav';
-import Checkboxs from './CheckBox'
+
 
 function getModalStyle() {
     // const top = 50 + rand();
@@ -37,9 +37,19 @@ export default function SimpleModal() {
     const [modalStyle] = React.useState(getModalStyle);
     const [open, setOpen] = React.useState(false);
     const [play] = useSound(clickSound);
+    // const gameStatic = {
+    //     X: 0,
+    //     // O: winO,
+    //     // draw: draw
+    // }
 
-
-
+    // useEffect(() => {
+    //     if (localStorage.gameGeneralStatic) {
+    //         gameStatic.X = (JSON.parse(localStorage.gameGeneralStatic)).X;
+    //         // setGameField((JSON.parse(localStorage.gameGeneralStatic)).field);
+    //         // localStorage.setItem('gameGeneralStatic', JSON.stringify(gameStatic));
+    //     }
+    // }, [])
 
     useEffect(() => {
         const onKeypress = e => {
@@ -71,16 +81,13 @@ export default function SimpleModal() {
 
     const body = (
         <div style={modalStyle} className={classes.paper}>
-            <h2 id="simple-modal-title">Settings</h2>
-            <p id="simple-modal-description">
-                Sound <br />
-                Music<br />
+            <h2 id="simple-modal-title">Statistics</h2>
+            <div id="simple-modal-description">
+                Win X: {(JSON.parse(localStorage.gameGeneralStatic)).X} <br />
+             Win O:  {(JSON.parse(localStorage.gameGeneralStatic)).O} <br />
+             Draw:  {(JSON.parse(localStorage.gameGeneralStatic)).draw}
+            </div>
 
-
-                {/* {Demo()} */}
-
-            </p>
-            <Checkboxs />
 
         </div>
     );
@@ -88,7 +95,7 @@ export default function SimpleModal() {
     return (
         <div>
             <Button variant="contained" color="primary" onClick={handleOpen}>
-                Settings
+                Statistic
             </Button>
 
             <Modal
