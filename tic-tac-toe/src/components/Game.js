@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import GameField from './GameField';
-import Modal from './Modal';
 import { calculateWinner } from '../utils';
 import { Button } from '@material-ui/core';
+import { ButtonGroup } from '@material-ui/core';
 import useSound from 'use-sound';
 import clickSound from './436667__herraportti__snap3.wav';
 import newGameSound from './newgame.wav';
 import winSound from './winSound.wav';
 import styled, { keyframes } from 'styled-components';
 import { bounce } from 'react-animations';
-import iconsView from './constant'
-
+import iconsView from './constant';
+import Checkbox from './CheckBox';
+import { IconButton } from '@material-ui/core';
+import MusicIcon from '@material-ui/icons/MusicOffRounded';
+import VolumeMute from '@material-ui/icons/MicNone';
 
 
 export default function Game() {
@@ -23,14 +26,18 @@ export default function Game() {
     const [playGame] = useSound(newGameSound);
     const [playWin] = useSound(winSound);
     const [isHovering, setIsHovering] = useState(true);
-
+    const [colorHeader, setcolorHeader] = useState('#64b5f6');
     const [icons, setIconsView] = useState(0);
+    const [colorMain, setColorMain] = useState('#115293');
+
 
     const gameState = {
         field: gameField,
         count: countStep,
         step: stepNext,
         isSound: isHovering,
+        colorMain: colorMain,
+        colorHeader: colorHeader
         // icons: icons
     }
     const Bounce = styled.div`animation: 2s ${keyframes`${bounce}`} infinite`;
@@ -46,16 +53,15 @@ export default function Game() {
             setCountStep((JSON.parse(localStorage.gameGeneral)).count);
             setStepNext((JSON.parse(localStorage.gameGeneral)).step);
             setIsHovering((JSON.parse(localStorage.gameGeneral)).isSound);
-        }
-        if (localStorage.gameGeneralSettings) {
-            setIconsView((JSON.parse(localStorage.gameGeneralSettings)).icons)
+            setColorMain((JSON.parse(localStorage.gameGeneral)).colorMain);
+            setcolorHeader((JSON.parse(localStorage.gameGeneral)).colorHeader);
         }
     }, [icons])
 
 
     useEffect(() => {
         const onKeypress = e => {
-            console.log(e);
+
             switch (e.code) {
                 case 'KeyN':
                     setGameField(Array(9).fill(null));
@@ -98,11 +104,12 @@ export default function Game() {
     })
 
     const handleClick = (index) => {
+
         const field = [...gameField];
         if (winner || field[index]) {
             return
         }
-        console.log(icons);
+
         field[index] = stepNext ? iconsView[icons][0] : iconsView[icons][1];
         setStepNext(!stepNext);
         setCountStep(countStep + 1);
@@ -119,7 +126,9 @@ export default function Game() {
             <Button variant="contained" color="primary" onClick={() => {
                 setGameField(Array(9).fill(null));
                 setCountStep(0);
-                playGame();
+                if (isHovering) {
+                    play();
+                }
 
             }} >
                 New Game
@@ -127,22 +136,22 @@ export default function Game() {
         )
     }
 
-    const startAutoPlay = (index) => {
-        setGameField(Array(9).fill(null));
-        setCountStep(0);
-        const field = [...gameField];
-        let timerId = setInterval(() => {
-            let index = Math.floor(Math.random() * 8);
-            console.log(index);
-            console.log('prosess' + countStep);
+    // const startAutoPlay = (index) => {
+    //     setGameField(Array(9).fill(null));
+    //     setCountStep(0);
+    //     const field = [...gameField];
+    //     let timerId = setInterval(() => {
+    //         let index = Math.floor(Math.random() * 8);
+    //         console.log(index);
+    //         console.log('prosess' + countStep);
 
-            field[index] = stepNext ? 'X' : 'O';
-            setStepNext(!stepNext);
-            setCountStep(countStep + 1);
+    //         field[index] = stepNext ? 'X' : 'O';
+    //         setStepNext(!stepNext);
+    //         setCountStep(countStep + 1);
 
 
-        }, 1000);
-    }
+    //     }, 1000);
+    // }
 
     const cancelGame = () => {
         let result = '';
@@ -167,21 +176,50 @@ export default function Game() {
         )
     }
 
+    const updateData = (value) => {
+        setIconsView(value);
+
+
+    }
+
+
+    const toggleSound = () => {
+        if (isHovering) {
+            setIsHovering(false);
+            stop();
+        }
+        else {
+            setIsHovering(true);
+            play();
+        }
+    }
+
 
     return (
-
-
-        <div className='container' >
-            <div className='header'>
+        <div className='container' style={{ backgroundColor: colorMain }} >
+            <div className='header' style={{ backgroundColor: colorHeader }}>
                 {startNewGame()}
-                <Button className='autoPlay' variant="contained" color="primary" onClick={startAutoPlay} >
-                    AutoPlay
-                    </Button>
-                <Modal />
+
+                <ButtonGroup disableElevation variant="contained" >
+                    <button className='color__btn' onClick={() => { setcolorHeader('#64b5f6') }} size='small'>Change</button>
+                    <button className='color__btn' onClick={() => { setcolorHeader('#e57373') }} size='small'>Color</button>
+                </ButtonGroup>
+                <IconButton color="primary" aria-label="delete" >
+                    <MusicIcon />
+                </IconButton>
+                <IconButton color="primary" aria-label="delete" onClick={toggleSound} title='on/off sound' >
+                    <VolumeMute />
+                </IconButton>
+
             </div>
+            <ButtonGroup disableElevation variant="contained" >
+                <Button className='color__btn' onClick={() => { setColorMain('#115293') }} size='small'>Change</Button>
+                <Button className='color__btn' onClick={() => { setColorMain('#e57373') }} size='small'>Color</Button>
+            </ButtonGroup>
+            <Checkbox updateData={updateData} />
             {cancelGame()}
 
-            <GameField cells={gameField} onClick={handleClick} onChange={startAutoPlay} />
+            <GameField cells={gameField} onClick={handleClick} />
 
         </div >
     )

@@ -4,7 +4,7 @@ import Modal from '@material-ui/core/Modal';
 import { Button } from '@material-ui/core';
 import useSound from 'use-sound';
 import clickSound from './436667__herraportti__snap3.wav';
-import Checkboxs from './CheckBoxs'
+import Checkboxs from './CheckBox'
 
 function getModalStyle() {
     // const top = 50 + rand();
@@ -38,38 +38,7 @@ export default function SimpleModal() {
     const [open, setOpen] = React.useState(false);
     const [play] = useSound(clickSound);
 
-    // function Demo() {
-    //     const [isChecked, setIsChecked] = React.useState(
-    //         false
-    //     );
 
-    //     const [playActive] = useSound(
-    //         '/sounds/pop-down.mp3',
-    //         { volume: 0.25 }
-    //     );
-    //     const [playOn] = useSound(
-    //         '/sounds/pop-up-on.mp3',
-    //         { volume: 0.25 }
-    //     );
-    //     const [playOff] = useSound(
-    //         '/sounds/pop-up-off.mp3',
-    //         { volume: 0.25 }
-    //     );
-
-    //     return (
-    //         <Checkbox
-    //             name="demo-checkbox"
-    //             checked={isChecked}
-    //             size={24}
-    //             label="I agree to self-isolate"
-    //             onChange={() => setIsChecked(!isChecked)}
-    //             onMouseDown={playActive}
-    //             onMouseUp={() => {
-    //                 isChecked ? playOff() : playOn();
-    //             }}
-    //         />
-    //     );
-    // }
 
 
     useEffect(() => {

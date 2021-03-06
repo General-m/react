@@ -7,7 +7,7 @@ export default function Cell(props) {
 
     return (
 
-        <div className="cell" onClick={props.onClick} onChange={props.onChange}>{props.value} </div>
+        <div className="cell" style={props.style} onClick={props.onClick} onChange={props.onChange}>{props.value} </div>
 
     )
 }
