@@ -31,21 +31,6 @@ export default function Game() {
     const [draw, setDraw] = useState(0);
 
 
-    const gameState = {
-        field: gameField,
-        count: countStep,
-        step: stepNext,
-        isSound: isHovering,
-        colorMain: colorMain,
-        colorHeader: colorHeader
-        // icons: icons
-    }
-    const gameStatic = {
-        X: winX,
-        O: winO,
-        draw: draw
-    }
-
 
     const useAudio = url => {
         const [audio] = useState(new Audio(url));
@@ -54,7 +39,14 @@ export default function Game() {
         const toggle = () => setPlaying(!playing);
 
         useEffect(() => {
-            playing ? audio.play() : audio.pause();
+            if (playing) {
+                audio.play();
+                audio.loop = true;
+                audio.autoplay = true;
+            }
+            else audio.pause()
+
+            // playing ? audio.play() : audio.pause();
         },
             [playing]
         );
@@ -71,14 +63,26 @@ export default function Game() {
 
     const [playing, toggle] = useAudio(Music);
 
+    const gameState = {
+        field: gameField,
+        count: countStep,
+        step: stepNext,
+        isSound: isHovering,
+        colorMain: colorMain,
+        colorHeader: colorHeader,
+        isMusic: playing
+    }
+    const gameStatic = {
+        X: winX,
+        O: winO,
+        draw: draw
+    }
 
     useEffect(() => {
         if (winner) {
             (stepNext) ? setWinO(winO + 1) : setWinX(winX + 1);
         }
-        // else if (countStep == 9) {
-        //     setDraw(draw + 1)
-        // }
+
     }, [countStep])
 
     useEffect(() => {
@@ -86,7 +90,6 @@ export default function Game() {
             setDraw(draw + 1)
         }
     }, [gameField])
-
 
 
     useEffect(() => {
@@ -108,6 +111,15 @@ export default function Game() {
         }
     }, [])
 
+    useEffect(() => {
+        localStorage.setItem('gameGeneral', JSON.stringify(gameState));
+
+    })
+    useEffect(() => {
+        localStorage.setItem('gameGeneralStatic', JSON.stringify(gameStatic));
+    })
+
+
 
     useEffect(() => {
         const onKeypress = e => {
@@ -127,7 +139,6 @@ export default function Game() {
                         setIsHovering(true);
                         play();
                     }
-
                     break;
 
                 case 'KeyA':
@@ -135,15 +146,11 @@ export default function Game() {
                     break;
 
                 case 'KeyQ':
-                    console.log(playing);
-                    console.log(toggle);
                     if (playing) {
                         toggle();
                     }
                     toggle();
                     break;
-
-
 
                 default:
                     break;
@@ -159,17 +166,7 @@ export default function Game() {
     }, [isHovering, playing]);
 
 
-    useEffect(() => {
-        localStorage.setItem('gameGeneral', JSON.stringify(gameState));
-
-    })
-    useEffect(() => {
-        localStorage.setItem('gameGeneralStatic', JSON.stringify(gameStatic));
-    })
-
     const handleClick = (index) => {
-        // console.log(playing);
-
         const field = [...gameField];
         if (winner || field[index]) {
             return
@@ -207,8 +204,7 @@ export default function Game() {
     //     const field = [...gameField];
     //     let timerId = setInterval(() => {
     //         let index = Math.floor(Math.random() * 8);
-    //         console.log(index);
-    //         console.log('prosess' + countStep);
+    //         
 
     //         field[index] = stepNext ? 'X' : 'O';
     //         setStepNext(!stepNext);
@@ -221,10 +217,8 @@ export default function Game() {
     const cancelGame = () => {
         let result = '';
         if (winner) {
-            console.log(winner, stepNext)
 
             result = 'Congratulations! Wins ' + winner;
-
 
         }
         else if (countStep == 9) {
@@ -266,9 +260,9 @@ export default function Game() {
             <div className='header' style={{ backgroundColor: colorHeader }}>
                 {startNewGame()}
 
-                <ButtonGroup disableElevation variant="contained" color="primary" >
-                    <Button className='color__btn' onClick={() => { setcolorHeader('#64b5f6') }} size='small'>Change</Button>
-                    <Button className='color__btn' onClick={() => { setcolorHeader('#e57373') }} size='small'>Color</Button>
+                <ButtonGroup disableElevation variant="contained" color="primary" title='header color' >
+                    <Button className='color__btn' onClick={() => { setcolorHeader('#64b5f6') }} size='small'>Blue</Button>
+                    <Button className='color__btn' onClick={() => { setcolorHeader('#e57373') }} size='small'>Pink</Button>
                 </ButtonGroup>
                 <IconButton color="primary" aria-label="delete" onClick={toggle} title='on/off sound' >
                     <MusicIcon />
@@ -279,9 +273,9 @@ export default function Game() {
                 <Modal />
 
             </div>
-            <ButtonGroup disableElevation variant="contained" color="primary">
-                <Button className='color__btn' onClick={() => { setColorMain('#115293') }} size='small'>Change</Button>
-                <Button className='color__btn' onClick={() => { setColorMain('#e57373') }} size='small'>Color</Button>
+            <ButtonGroup disableElevation variant="contained" color="primary" title='container color'>
+                <Button className='color__btn' onClick={() => { setColorMain('#115293') }} size='small'>Blue</Button>
+                <Button className='color__btn' onClick={() => { setColorMain('#e57373') }} size='small'>Pink</Button>
             </ButtonGroup>
             <Checkbox updateData={updateData} />
             {cancelGame()}

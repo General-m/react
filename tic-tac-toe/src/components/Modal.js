@@ -46,7 +46,13 @@ export default function SimpleModal() {
         const onKeypress = e => {
             switch (e.code) {
                 case 'KeyS':
-                    handleOpen();
+                    if (open) {
+                        handleClose();
+                    }
+                    else {
+                        handleOpen();
+                    }
+
                     break;
 
                 default:
@@ -60,7 +66,7 @@ export default function SimpleModal() {
         return () => {
             document.removeEventListener('keypress', onKeypress);
         };
-    }, []);
+    }, [open]);
 
     const handleOpen = () => {
         setOpen(true);
