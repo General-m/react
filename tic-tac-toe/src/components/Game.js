@@ -264,7 +264,7 @@ export default function Game() {
                     <Button className='color__btn' onClick={() => { setcolorHeader('#64b5f6') }} size='small'>Blue</Button>
                     <Button className='color__btn' onClick={() => { setcolorHeader('#e57373') }} size='small'>Pink</Button>
                 </ButtonGroup>
-                <IconButton color="primary" aria-label="delete" onClick={toggle} title='on/off sound' >
+                <IconButton color="primary" aria-label="delete" onClick={toggle} title='on/off music' >
                     <MusicIcon />
                 </IconButton>
                 <IconButton color="primary" aria-label="delete" onClick={toggleSound} title='on/off sound' >

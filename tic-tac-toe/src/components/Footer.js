@@ -6,10 +6,10 @@ import Link from '@material-ui/core/Link';
 export default function Footer() {
     return (
         <div className='footer'>
-            <Link href="/">
+            <Link href="/react/tic-tac-toe/build/">
                 Game
                 </Link>
-            <Link href='/About' >
+            <Link href='/react/tic-tac-toe/build/About' >
                 About
                 </Link>
             <Link href="https://rs.school/js/" >
